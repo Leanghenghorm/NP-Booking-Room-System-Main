@@ -1,0 +1,5 @@
+{
+  "name": "RoomBook",
+  "description": "A department-aware, time-range validated, conflict-protected meeting room scheduling system.",
+  "requestFramePermissions": []
+}
