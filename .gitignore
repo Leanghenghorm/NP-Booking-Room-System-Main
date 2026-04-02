@@ -14,3 +14,10 @@ database.sqlite-wal
 dist/
 *.pem
 *.pfx
+echo "*.pem" >> .gitignore
+echo "*.db" >> .gitignore
+echo "*.zip" >> .gitignore
+git rm --cached key.pem sessions.db *.zip
+git add .gitignore
+git commit -m "Remove sensitive and generated files"
+git push
