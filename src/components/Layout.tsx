@@ -25,8 +25,10 @@ export function Layout({ children, currentTab, onTabChange }: { children: ReactN
         <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-16 flex items-center justify-between">
           <div className="flex items-center gap-8">
             <div className="flex items-center gap-3 text-indigo-600">
-              <Building2 className="h-8 w-8" />
-              <span className="font-bold text-xl tracking-tight text-slate-900">RoomBook</span>
+              {/* <Building2 className="h-8 w-8" /> */}
+              <img src="/logo/NPSec_Cyber.png" alt="Logo" className="h-8 w-auto" />
+
+              {/* <span className="font-bold text-xl tracking-tight text-slate-900">RoomBook</span> */}
             </div>
             
             {user && (

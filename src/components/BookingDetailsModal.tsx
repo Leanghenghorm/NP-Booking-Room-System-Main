@@ -4,6 +4,7 @@ import { Booking } from "../types";
 import { useAuth } from "./AuthProvider";
 import { useState } from "react";
 import { ConfirmationModal } from "./ConfirmationModal";
+import { motion } from "motion/react";
 
 export function BookingDetailsModal({ booking, onClose, onCancelSuccess }: { booking: Booking, onClose: () => void, onCancelSuccess?: () => void }) {
   const { user } = useAuth();
@@ -37,8 +38,14 @@ export function BookingDetailsModal({ booking, onClose, onCancelSuccess }: { boo
 
   return (
     <>
-      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-        <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh] animate-in fade-in zoom-in duration-200">
+      <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
+        <motion.div 
+          initial={{ y: "100%" }}
+          animate={{ y: 0 }}
+          exit={{ y: "100%" }}
+          transition={{ type: "spring", damping: 25, stiffness: 200 }}
+          className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[90vh] sm:max-h-[85vh]"
+        >
           <div className="p-5 sm:p-6 border-b border-slate-100 flex justify-between items-center shrink-0">
             <div>
               <h2 className="text-xl font-bold text-slate-900">Booking Details</h2>
@@ -49,7 +56,7 @@ export function BookingDetailsModal({ booking, onClose, onCancelSuccess }: { boo
             </button>
           </div>
           
-          <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1">
+          <div className="p-5 sm:p-6 space-y-6 overflow-y-auto flex-1 overscroll-contain">
             <div>
               <h3 className="text-sm font-bold text-slate-400 uppercase tracking-wider mb-2">Meeting Title</h3>
               <p className="text-xl font-bold text-slate-900">{booking.title}</p>
@@ -104,7 +111,7 @@ export function BookingDetailsModal({ booking, onClose, onCancelSuccess }: { boo
             )}
           </div>
 
-          <div className="p-5 sm:p-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center shrink-0">
+          <div className="p-5 sm:p-6 bg-slate-50 border-t border-slate-100 flex justify-between items-center shrink-0 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-6">
             {canCancel ? (
               <button
                 onClick={() => setShowCancelConfirm(true)}
@@ -123,7 +130,7 @@ export function BookingDetailsModal({ booking, onClose, onCancelSuccess }: { boo
               Close
             </button>
           </div>
-        </div>
+        </motion.div>
       </div>
 
       <ConfirmationModal

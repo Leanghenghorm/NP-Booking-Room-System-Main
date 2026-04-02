@@ -3,6 +3,7 @@ import { format, isBefore, parseISO, parse } from "date-fns";
 import { useAuth } from "./AuthProvider";
 import { cn } from "../lib/utils";
 import { Room } from "../types";
+import { motion, AnimatePresence } from "motion/react";
 
 export function BookingModal({ roomId, date, settings, onClose, onSuccess, rooms }: { roomId: number | null, date: string, settings: any, onClose: () => void, onSuccess: () => void, rooms?: Room[] }) {
   const { user } = useAuth();
@@ -113,15 +114,27 @@ export function BookingModal({ roomId, date, settings, onClose, onSuccess, rooms
   };
 
   return (
-    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-50 flex items-center justify-center p-4 sm:p-6 pb-[calc(1rem+env(safe-area-inset-bottom))]">
-      <div className="bg-white rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[85vh]">
-        <div className="p-5 sm:p-6 border-b border-slate-100 shrink-0">
-          <h2 className="text-xl font-bold text-slate-900">New Booking</h2>
-          <p className="text-sm text-slate-500 mt-1">Schedule a meeting room</p>
+    <div className="fixed inset-0 bg-slate-900/40 backdrop-blur-sm z-[100] flex items-end sm:items-center justify-center p-0 sm:p-6">
+      <motion.div 
+        initial={{ y: "100%" }}
+        animate={{ y: 0 }}
+        exit={{ y: "100%" }}
+        transition={{ type: "spring", damping: 25, stiffness: 200 }}
+        className="bg-white rounded-t-2xl sm:rounded-2xl shadow-xl w-full max-w-md overflow-hidden flex flex-col max-h-[92vh] sm:max-h-[85vh]"
+      >
+        <div className="p-5 sm:p-6 border-b border-slate-100 shrink-0 flex justify-between items-center">
+          <div>
+            <h2 className="text-xl font-bold text-slate-900">New Booking</h2>
+            <p className="text-sm text-slate-500 mt-1">Schedule a meeting room</p>
+          </div>
+          <button onClick={onClose} className="sm:hidden p-2 text-slate-400 hover:text-slate-600">
+            <span className="sr-only">Close</span>
+            <svg className="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path strokeLinecap="round" strokeLinejoin="round" strokeWidth={2} d="M6 18L18 6M6 6l12 12" /></svg>
+          </button>
         </div>
         
         <form onSubmit={handleSubmit} className="flex flex-col overflow-hidden flex-1">
-          <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1">
+          <div className="p-5 sm:p-6 space-y-4 overflow-y-auto flex-1 overscroll-contain">
           {error && (
             <div className="p-3 bg-rose-50 text-rose-700 text-sm rounded-xl border border-rose-100">
               {error}
@@ -284,7 +297,7 @@ export function BookingModal({ roomId, date, settings, onClose, onSuccess, rooms
           </div>
 
           </div>
-          <div className="p-5 sm:p-6 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50">
+          <div className="p-5 sm:p-6 border-t border-slate-100 shrink-0 flex gap-3 bg-slate-50 pb-[calc(1.25rem+env(safe-area-inset-bottom))] sm:pb-6">
             <button
               type="button"
               onClick={onClose}
@@ -301,7 +314,7 @@ export function BookingModal({ roomId, date, settings, onClose, onSuccess, rooms
             </button>
           </div>
         </form>
-      </div>
+      </motion.div>
     </div>
   );
 }
