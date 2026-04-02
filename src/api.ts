@@ -5,6 +5,14 @@ import * as bcrypt from "bcryptjs";
 import "express-session";
 import crypto from "crypto";
 
+function formatDate(dateString) {
+  const date = new Date(dateString);
+  const day = date.getDate();
+  const month = date.toLocaleString('default', { month: 'long' });
+  const year = date.getFullYear();
+  return `${day}-${month}-${year}`;
+}
+
 export const apiRouter = Router();
 
 // Logging middleware for API
@@ -764,13 +772,17 @@ apiRouter.post("/bookings", async (req, res) => {
         const chatIdSetting = db.prepare("SELECT value FROM system_settings WHERE key = 'telegram_chat_id'").get() as any;
         
         if (tokenSetting?.value && chatIdSetting?.value) {
-          const message = `🔔 *New Refreshment Request*\n\n` +
-            `*Meeting:* ${title}\n` +
-            `*Room:* ${room.name}\n` +
-            `*Date:* ${start_datetime.split('T')[0]}\n` +
-            `*Time:* ${start_datetime.split('T')[1]} - ${end_datetime.split('T')[1]}\n` +
-            `*Participants:* ${participant_count}\n` +
-            `*Requested By:* ${user.full_name}`;
+   
+          const message = `🔔 *NEW REFRESHMENT REQUEST* 🔔\n\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+          `📋 *Meeting:* ${title}\n` +
+          `🚪 *Room:* ${room.name}\n` +
+          `📅 *Date:* ${formatDate(start_datetime.split('T')[0])}\n` +
+          `⏰ *Time:* ${start_datetime.split('T')[1].slice(0,5)} - ${end_datetime.split('T')[1].slice(0,5)}\n` +
+          `👥 *Participants:* ${participant_count}\n` +
+          `👤 *Requested By:* ${user.full_name}\n\n` +
+          `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+          `✅ *Status:* Pending Preparation`;  
 
           fetch(`https://api.telegram.org/bot${tokenSetting.value}/sendMessage`, {
             method: 'POST',
@@ -860,12 +872,15 @@ apiRouter.put("/bookings/:id", (req, res) => {
           const chatIdSetting = db.prepare("SELECT value FROM system_settings WHERE key = 'telegram_chat_id'").get() as any;
           
           if (tokenSetting?.value && chatIdSetting?.value) {
-            const message = `❌ *Refreshment Request CANCELLED (via Update)*\n\n` +
-              `*Meeting:* ${fullBooking.title}\n` +
-              `*Room:* ${fullBooking.room_name}\n` +
-              `*Date:* ${fullBooking.start_datetime.split('T')[0]}\n` +
-              `*Time:* ${fullBooking.start_datetime.split('T')[1]} - ${fullBooking.end_datetime.split('T')[1]}\n` +
-              `*Updated By:* System`;
+            const message = `❌ *REFRESHMENT REQUEST CANCELLED* ❌\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `📋 *Meeting:* ${fullBooking.title}\n` +
+            `🚪 *Room:* ${fullBooking.room_name}\n` +
+            `📅 *Date:* ${formatDate(fullBooking.start_datetime.split('T')[0])}\n` +
+            `⏰ *Time:* ${fullBooking.start_datetime.split('T')[1].slice(0,5)} - ${fullBooking.end_datetime.split('T')[1].slice(0,5)}\n` +
+            `👤 *Cancelled By:* System\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `⚠️ *Action Required:* Please cancel any prepared refreshments`;
 
             fetch(`https://api.telegram.org/bot${tokenSetting.value}/sendMessage`, {
               method: 'POST',
@@ -957,12 +972,15 @@ apiRouter.delete("/bookings/:id", (req, res) => {
         const chatIdSetting = db.prepare("SELECT value FROM system_settings WHERE key = 'telegram_chat_id'").get() as any;
         
         if (tokenSetting?.value && chatIdSetting?.value) {
-          const message = `❌ *Refreshment Request CANCELLED*\n\n` +
-            `*Meeting:* ${fullBooking.title}\n` +
-            `*Room:* ${fullBooking.room_name}\n` +
-            `*Date:* ${fullBooking.start_datetime.split('T')[0]}\n` +
-            `*Time:* ${fullBooking.start_datetime.split('T')[1]} - ${fullBooking.end_datetime.split('T')[1]}\n` +
-            `*Cancelled By:* ${userIdStr ? (db.prepare("SELECT full_name FROM users WHERE id = ?").get(userIdStr) as any)?.full_name : 'System'}`;
+          const message = `❌ *REFRESHMENT REQUEST CANCELLED* ❌\n\n` +
+            `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `📋 *Meeting:* ${fullBooking.title}\n` +
+            `🚪 *Room:* ${fullBooking.room_name}\n` +
+            `📅 *Date:* ${formatDate(fullBooking.start_datetime.split('T')[0])}\n` +
+            `⏰ *Time:* ${fullBooking.start_datetime.split('T')[1].slice(0,5)} - ${fullBooking.end_datetime.split('T')[1].slice(0,5)}\n` +
+            `👤 *Cancelled By:* ${userIdStr ? (db.prepare("SELECT full_name FROM users WHERE id = ?").get(userIdStr) as any)?.full_name : 'System'}`;
+            `━━━━━━━━━━━━━━━━━━━━━\n\n` +
+            `⚠️ *Action Required:* Please cancel any prepared refreshments`;
 
           fetch(`https://api.telegram.org/bot${tokenSetting.value}/sendMessage`, {
             method: 'POST',
